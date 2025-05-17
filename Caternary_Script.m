@@ -1,13 +1,10 @@
-%% DuoCopter EoM
-clear 
-clc
-close all
+function T_V = Caternay_Script(Vert_pos,offset)
 %% Governing Equation Caternary Curve:
 
 x_mount = 0;
-y_mount = 0.7;
-x_cart = 0.2 ;
-y_cart = 0.33 ;
+y_mount = 0.33;
+x_cart = offset;
+y_cart = Vert_pos;
 
 
 F = @(x,a,c,d) c*cosh((x-a)/c)+d;
@@ -26,8 +23,16 @@ F3 = @(p) catenary_arc_length(p(1), p(2), x_mount, x_cart) - s;
 % Combine into a system
 Fun = @(p) [F1(p); F2(p) ; F3(p)];
 
+
+lb = [-Inf; 1e-6; -Inf];
+ub = [Inf; Inf; Inf];
+opts = optimoptions('lsqnonlin','Display','iter','TolFun',1e-10,'TolX',1e-10);
+
+
 % Solve
-G = fsolve(Fun, x0);
+
+G = lsqnonlin(Fun, x0, lb, ub, opts);
+
 a_sol = G(1);
 c_sol = G(2);
 d_sol = G(3);
@@ -47,6 +52,7 @@ end
 
 rho = 0.190;
 
-T_H = rho*9.81*c_sol
-T_V = T_H * sinh((x_cart - a_sol)/c_sol)
-T_total = T_H * cosh((x_cart - a_sol)/c_sol)
+T_H = rho*9.81*c_sol;
+T_V = T_H * sinh((x_cart - a_sol)/c_sol);
+T_total = T_H * cosh((x_cart - a_sol)/c_sol);
+end
