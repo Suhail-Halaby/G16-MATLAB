@@ -46,8 +46,13 @@ g = 9.81;
 
 F = @(Q,T,X) ((2*mu)/h)*abs(l_t*Q-m_c*g*l_g-T*l_c);
 
-
-
+%% Plotting
+subplot(1,2,1)
+plot(u_range,Q_table)
+title('Thrust Force (N) vs. Control Input (% Thrtl)')
+subplot(1,2,2)
+plot(V_range,T_table)
+title('Vertical Position (m) vs. Vertical Cable Tension')
 
 
 %% Tables
