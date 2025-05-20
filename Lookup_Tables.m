@@ -49,14 +49,34 @@ g = 9.81;
 
 F = @(Q,T,X) ((2*mu)/h)*abs(l_t*Q-m_c*g*l_g-T*l_c);
 
+%% Edge Protection - Terminal Velocity Saturation
+
+E = @(x,h,k) (1+h).*(1 ./ (1+exp(-k*x))) - h ;
+h_funct = @(V) 1-2*V;
+
+Max_Terminal_V_factor = 0.25;
+Sharpness_Const = 10;
+
+V_range2 = 0:0.01:1.44;
+E_table = E(V_range2,h_funct(Max_Terminal_V_factor),Sharpness_Const); 
+
+
+
+
+
 %% Plotting
-subplot(1,2,1)
+subplot(2,2,1)
 plot(u_range,Q_table)
 title('Thrust Force (N) vs. Control Input (% Thrtl)')
-subplot(1,2,2)
+subplot(2,2,2)
 plot(V_range,T_table)
 title('Vertical Position (m) vs. Vertical Cable Tension')
-
+subplot(2,2,3)
+plot(V_range2,E_table)
+title('Velocity Saturation Limit (LWR) vs. Position')
+subplot(2,2,4)
+plot(V_range2,flip(E_table))
+title('Velocity Saturation Limit (UPPR) vs. Position')
 
 %% Tables
 
